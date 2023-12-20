@@ -1,0 +1,264 @@
+% assignment5.m4  
+%
+% Treshur Allen-----Bruce Bolden-----CS121
+% ------------MAY 6-------------GNU-------
+%
+%   An m4 file to package source files for submission.
+%  After using m4 on this file, a single file will
+%  be generated with the contents of the included files
+%  (Hash.cpp, DictHash.cpp)
+%
+%  To generate a file for typesetting:
+%
+%   m4 assignment5.m4 > assignment5_TA.tex
+
+
+\documentclass[12pt]{article}
+
+%\usepackage[fancybox]
+%\usepackage{color}  % old
+\usepackage[usenames]{color}
+\definecolor{light-gray}{gray}{0.65}
+
+\begin{document}
+
+\section{Introduction}
+
+Here are the files for assignment 5, HashTables:
+
+\pagebreak
+
+\section{Program Log}
+
+%  Text file
+
+\begin{verbatim}
+PROGRAM LOG
+
+Time Required:
+	about 10 hours actually coding 
+	45 mins designing 
+	1 hour actually implimenting 
+Problems:
+	The greatest problem I faced when starting this 
+	assignment was trying to get the dict4.txt and dict8.txt
+	files to read in properly. No matter how many different 
+	things I tried, I would get a segmentation fault 
+	everytime I ran the program. 
+Different table sizes: 
+	By changing the table size I found that it greatly 
+	changed the placement of where the inserted values 
+        were located at, this makes sense because the hash 
+	value is based on the size of the table.
+
+
+\end{verbatim}
+
+\pagebreak
+
+\section{Source Code}
+
+%  Files
+
+\subsection{Hash.cpp}
+
+\begin{verbatim}
+
+/* Hash.cpp
+ *
+ *  Hash table implementation from w/ header file: 
+ *  Kernighan & Ritchie, The C Programming Language,
+ *     Second Edition, Prentice-Hall, 1988.
+ */
+
+#include <iostream>
+#include <iomanip>
+#include <cstdlib>
+#include <cstring>
+#include <string>
+
+using namespace std;
+
+// hash header
+
+struct nList     /*  table entry:  */
+{
+   char *word;          //  defined name of the word in the dictonary      
+   int count = 0;
+   struct nList *next;  //  next entry in chain  
+};
+
+typedef struct nList *NListPtr;
+
+//-----------------------------------protos--------------------------
+unsigned Hash( char *s );
+NListPtr Lookup( char *s );
+NListPtr Insert( char *word );
+void PrintHashTable();
+void PrintMinMax();
+
+const int HASH_TABLE_SIZE = 8017;
+static NListPtr hashTable[HASH_TABLE_SIZE];
+
+//-------------------------------definitions----------------------
+static char *Strdup( const char *s);  //  in cstring, but....
+
+
+
+/*  Hash
+ *  Generate hash value for string s
+ */
+
+unsigned Hash( char *s )
+{
+    unsigned hashVal;
+    
+    for( hashVal = 0 ; *s != '\0' ; s++ )
+        hashVal = *s + 31 * hashVal;
+        
+    return  hashVal % HASH_TABLE_SIZE;
+}
+
+
+/*  Lookup
+ *  Look for s in hashTable
+ */
+
+NListPtr Lookup( char *s )
+{
+    NListPtr np;
+    
+    for( np = hashTable[Hash(s)] ; np != NULL ; np = np->next )
+    {
+        if( strcmp(s, np->word) == 0 )
+            return np;    //  found
+    }
+    
+    return NULL;          //  not found
+}
+
+/*  Insert
+ *  Put ( word ) in hash table
+ */
+ 
+NListPtr Insert( char *word )
+{
+    unsigned hashVal;
+    NListPtr np;
+    
+    if( (np = Lookup(word)) == NULL )  // not found
+    {
+        np = (NListPtr) malloc(sizeof(*np));
+        if( np == NULL || (np->word = Strdup(word)) == NULL )
+            return NULL;
+        hashVal = Hash(word);
+        np->next = hashTable[hashVal];
+        hashTable[hashVal] = np;
+        np->count++;
+    }
+    else
+	np->count++;
+        
+    return np;
+}
+
+
+/*  PrintHashTable
+ *  Print the hash table contents
+ */
+
+void PrintHashTable()
+{
+    NListPtr np;
+    cout << "--------------------\n" << endl;
+
+    for( int i = 0 ; i < HASH_TABLE_SIZE ; i++ )
+    {
+        np = hashTable[i];
+        while( np != NULL )
+        {
+	     cout << "Bucket    words" << endl;
+             cout << setw(2) << i << ":    ";
+             cout << np->count <<endl;
+             np = np->next;
+        }
+    }
+}
+
+void PrintMinMax(){
+  cout << "Here are the mins an maxs for each bucket:" << endl;
+  cout << "------------------------------------------" << endl << endl;
+
+  NListPtr np;
+
+  for( int i = 0; i < HASH_TABLE_SIZE ; i++){
+    np = hashTable[i];
+    while( np != NULL ){
+	cout << "Min  Max" << endl;
+	cout << setw(2) << np->min << " , " << np->max;
+	cout << endl;
+	np = np->next;
+    } // end while
+  } // end for
+}// end function
+
+/*  Strdup
+ *  Make a duplicate copy of s
+ */
+
+static char *Strdup( const char *s )
+{
+    char *p;
+    
+    p = (char * ) malloc(strlen(s)+1);          /*  +1 for '\0'  */
+    if( p != NULL )
+        strcpy(p,s);
+
+    return p;
+}
+
+
+
+\end{verbatim}
+
+\pagebreak
+
+%  main file 
+
+\subsection{DictHash.cpp}
+
+\begin{verbatim}
+/*  DictHash.cpp
+ *  test file for assignment
+*/
+
+#include <iostream>
+#include <cstdlib> 
+#include <fstream>
+#include <string>
+using namespace std;
+
+#include "Hash.cpp"
+
+int main(){
+
+ ifstream dict;
+ dict.open( "dict8.h" );
+ 
+ while( !dict.eof() ){
+  char *Word;
+
+  dict >> Insert( Word );
+ } // end of while loop
+ 
+ cout << "Here is the information about your dictonary table: " << endl;
+
+ PrintHashTable();
+ cout << endl;
+ PrintMinMax();
+
+} // end of main 
+
+\end{verbatim}
+
+\end{document}

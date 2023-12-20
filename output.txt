@@ -1,0 +1,18 @@
+Assignment 2 Output
+Treshur Allen
+Feb 14, 2020
+
+Script started on Thu 13 Feb 2020 2:59:07 PM PST
+[?1034hbash-4.2$ ./a.out
+aardvark bird cat dog hamster cat rabbit zebra
+aardvark bird hamster cat dog hamster 
+hamster cat dog hamster 
+
+zebra lizard cat dog hamster bird frog snake rabbit horse dolphin dolphin
+zebra cat hamster bird frog snake horse dolphin dolphin hamster
+zebra cat hamster frog snake horse dolphin dolphin hamster zebra mouse
+zebra cat hamster frog snake dolphin dolphin hamster zebra mouse cat
+bash-4.2$ exit
+exit
+
+Script done on Thu 13 Feb 2020 2:59:16 PM PST
